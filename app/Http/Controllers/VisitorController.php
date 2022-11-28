@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class VisitorController extends Controller
 {
@@ -82,9 +83,16 @@ class VisitorController extends Controller
      */
     public function update(Request $request, Visitor $visitor)
     {
+        $currentUser = auth()->id();
+
         $request->validate([
             'comments' => 'required'
         ]);
+        //if ($visitor->user_id !== $currentUser->id) {
+        //    abort(401);
+        //}
+
+        ///if (Gate::forUser($user)->denies('update-post', $visitor)) {}
         $visitor->comments = $request->comments;
         $visitor->save();
         return redirect()->route('visitors.index')
